@@ -1,0 +1,67 @@
+{
+  "name": "@lokat/solid",
+  "version": "0.1.0",
+  "description": "Ultra-lightweight and ultra-fast i18n for SolidJS. Reactive by design, zero overhead on the hot-path, and safe across SSR/CSR/edge.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/lokapod/lokat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lokapod/lokat.git",
+    "directory": "packages/solid"
+  },
+  "author": "KazViz <kaz@kazviz.com> (https://kazviz.com)",
+  "bugs": {
+    "url": "https://github.com/lokapod/lokat/issues"
+  },
+  "keywords": [
+    "kazviz",
+    "lokat",
+    "i18n",
+    "internationalization",
+    "solidjs",
+    "solid"
+  ],
+
+  "scripts": {
+    "build": "bun build src/index.ts --outfile=dist/index.mjs --format=esm --target=node --sourcemap=none --minify --external solid-js && tsc -p tsconfig.json --emitDeclarationOnly",
+    "clean": "rm -rf dist .tsbuildinfo",
+    "test": "bun test",
+    "bench": "bun run scripts/bench.ts"
+  },
+
+  "packageManager": "bun@1.3.1",
+  "dependencies": {},
+  "peerDependencies": {
+    "solid-js": "^1.8.0"
+  },
+
+  "engines": {
+    "bun": ">=1.2.0",
+    "node": ">=18"
+  },
+
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.mjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packlet": {
+    "gpr": true,
+    "gprName": "@lokapod/lokat-solid"
+  }
+}
