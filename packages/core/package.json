@@ -1,0 +1,62 @@
+{
+  "name": "@lokat/core",
+  "version": "0.1.0",
+  "description": "Ultra-lightweight agnostic i18n core designed for maximum runtime performance, minimal latency, and tiny size",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/lokapod/lokat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lokapod/lokat.git",
+    "directory": "packages/core"
+  },
+  "author": "KazViz <kaz@kazviz.com> (https://kazviz.com)",
+  "bugs": {
+    "url": "https://github.com/lokapod/lokat/issues"
+  },
+  "keywords": [
+    "kazviz",
+    "lokat",
+    "i18n",
+    "internationalization",
+    "core"
+  ],
+
+  "scripts": {
+    "build": "bun build src/index.ts --outfile=dist/index.mjs --format=esm --target=node --sourcemap=none --minify && tsc -p tsconfig.json --emitDeclarationOnly",
+    "clean": "rm -rf dist .tsbuildinfo",
+    "test": "bun test"
+  },
+
+  "packageManager": "bun@1.3.1",
+  "dependencies": {},
+
+  "engines": {
+    "bun": ">=1.2.0",
+    "node": ">=18"
+  },
+
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.mjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packlet": {
+    "gpr": true,
+    "gprName": "@lokapod/lokat-core"
+  }
+}
