@@ -1,6 +1,6 @@
 {
   "name": "@lokat/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ultra-lightweight agnostic i18n core designed for maximum runtime performance, minimal latency, and tiny size",
   "license": "MIT",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@lokat/solid",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ultra-lightweight and ultra-fast i18n for SolidJS. Reactive by design, zero overhead on the hot-path, and safe across SSR/CSR/edge.",
   "license": "MIT",
   "type": "module",
