@@ -1,5 +1,11 @@
 # @lokat/core
 
+## 0.1.2
+
+### Patch Changes
+
+- f148c81: Enhance `Lokat` and `SolidLokat` interfaces with detailed documentation and examples.
+
 ## 0.1.1
 
 ### Patch Changes
