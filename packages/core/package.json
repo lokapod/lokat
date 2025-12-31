@@ -23,7 +23,7 @@
   ],
 
   "scripts": {
-    "build": "bun build src/index.ts --outfile=dist/index.mjs --format=esm --target=node --sourcemap=none --minify && tsc -p tsconfig.json --emitDeclarationOnly",
+    "build": "bun build src/index.ts --outdir dist/ --format esm --target node --sourcemap && bun build src/index.ts --outdir dist/ --entry-naming [name].min.[ext] --format esm --target node --sourcemap --minify && tsc -p tsconfig.json --emitDeclarationOnly",
     "clean": "rm -rf dist .tsbuildinfo",
     "test": "bun test"
   },
@@ -39,14 +39,18 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/",
+  "module": "./dist/",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "default": "./dist/index.mjs",
-      "import": "./dist/index.mjs",
+      "default": "./dist/index.js",
+      "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./min": {
+      "default": "./dist/index.min.js",
+      "import": "./dist/index.min.js"
     }
   },
   "sideEffects": false,
