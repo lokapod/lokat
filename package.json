@@ -39,7 +39,8 @@
     "dprint": "^0.51.1",
     "lefthook": "^2.0.2",
     "packlet": "^0.3.3",
-    "turbo": "^2.7.2"
+    "turbo": "^2.7.2",
+    "typescript": "^5.9.3"
   },
 
   "config": {

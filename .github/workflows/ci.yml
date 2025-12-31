@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   quality:
-    name: Lint and Format
+    name: Check and Format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,11 +31,8 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Lint
-        run: bun run lint
-
-      - name: Format check
-        run: bun run format:check
+      - name: Check & Lint
+        run: bun run check
 
   build:
     name: Build
