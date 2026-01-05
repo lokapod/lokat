@@ -151,7 +151,10 @@ export function createSolidLokat<L = unknown>(
   options: SolidLokatOptions<L>,
 ): SolidLokatInstance<L> {
   const [locale, setLocaleSignal] = createSignal<L>(options.initialLocale)
-  const [dict, setDict] = createSignal<Dict>(options.initialDict ?? {})
+  // Maintain a plain, non-reactive reference for hot-path lookups.
+  let currentDict: Dict = options.initialDict ?? {}
+  // Keep a Signal for reactive consumers; do not use it in hot path.
+  const [_dict, setDictSignal] = createSignal<Dict>(currentDict)
 
   // Instance-scoped cache: locale -> Promise<Dict>
   const cache = new Map<L, Promise<Dict>>()
@@ -164,14 +167,14 @@ export function createSolidLokat<L = unknown>(
       const cached = cache.get(l)
       if (cached) {
         const d = await cached
-        setDict(d)
+        setDictInternal(d)
         return d
       }
     }
     const promise = options.loadLocale(l)
     if (!options.dev?.disableCache) cache.set(l, promise)
     const d = await promise
-    setDict(d)
+    setDictInternal(d)
     return d
   }
 
@@ -181,10 +184,17 @@ export function createSolidLokat<L = unknown>(
     void load(options.initialLocale)
   }
 
+  /** Update dictionary with identity guard and emit Signal for reactive consumers. */
+  function setDictInternal(d: Dict) {
+    if (currentDict !== d) {
+      currentDict = d
+      setDictSignal(d)
+    }
+  }
+
   /** Translator: reads the current dictionary signal for an O(1) lookup. */
   function t(key: string): string {
-    const d = dict()
-    return d[key] ?? key
+    return currentDict[key] ?? key
   }
 
   /** Set a new locale; fires hooks and updates dictionary upon load. */
