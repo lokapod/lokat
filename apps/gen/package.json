@@ -1,0 +1,75 @@
+{
+  "name": "@lokat/gen",
+  "version": "0.1.0",
+  "description": "Generates const enums and readonly arrays for ultra-lightweight i18n.",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/lokapod/lokat",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lokapod/lokat.git",
+    "directory": "apps/gen"
+  },
+  "author": "KazViz <kaz@kazviz.com> (https://kazviz.com)",
+  "bugs": {
+    "url": "https://github.com/lokapod/lokat/issues"
+  },
+  "keywords": [
+    "kazviz",
+    "lokat",
+    "i18n",
+    "internationalization",
+    "core",
+    "generator"
+  ],
+
+  "scripts": {
+    "dev": "bun run src/cli.ts -- --help",
+    "gen": "bun run src/cli.ts",
+    "build": "bun build src/index.ts --outdir dist --format esm --target node --sourcemap && bun build src/index.ts --outdir dist --entry-naming [name].min.[ext] --format esm --target node --sourcemap --minify && bun build src/cli.ts --outdir dist --format esm --target node --sourcemap && tsc -p tsconfig.json --emitDeclarationOnly",
+    "clean": "rm -rf dist .tsbuildinfo",
+    "test": "bun test"
+  },
+
+  "packageManager": "bun@1.3.1",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^25.0.3"
+  },
+
+  "engines": {
+    "bun": ">=1.2.0",
+    "node": ">=18"
+  },
+
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./min": {
+      "default": "./dist/index.min.js",
+      "import": "./dist/index.min.js"
+    }
+  },
+  "bin": {
+    "lokat-gen": "./dist/cli.js"
+  },
+  "sideEffects": false,
+
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packlet": {
+    "gpr": true,
+    "gprName": "@lokapod/lokat-gen"
+  }
+}
