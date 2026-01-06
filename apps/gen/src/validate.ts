@@ -4,7 +4,7 @@ export function validateAndOrder(layout: InputLayout, refLocale: LocaleCode): Ge
   const issues: ValidationIssue[] = []
   const ref = layout.locales.get(refLocale)
   if (!ref) throw new Error(`Reference locale '${refLocale}' not found in input`)
-  const namespaces = [...ref.keys()].sort()
+  const namespaces = Array.from(ref.keys()).sort()
   const orderByNs = new Map<Namespace, string[]>()
 
   for (const ns of namespaces) {

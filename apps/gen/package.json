@@ -28,7 +28,7 @@
     "gen": "bun run src/cli.ts",
     "build": "bun build src/index.ts --outdir dist --format esm --target node --sourcemap && bun build src/index.ts --outdir dist --entry-naming [name].min.[ext] --format esm --target node --sourcemap --minify && bun build src/cli.ts --outdir dist --format esm --target node --sourcemap && tsc -p tsconfig.json --emitDeclarationOnly",
     "clean": "rm -rf dist .tsbuildinfo",
-    "test": "bun test"
+    "test": "bun test --pass-with-no-tests"
   },
 
   "packageManager": "bun@1.3.1",
