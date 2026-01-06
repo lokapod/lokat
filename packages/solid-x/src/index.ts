@@ -54,6 +54,8 @@ export interface SolidLokatInstance<L = unknown> {
   setLocale: (l: L) => Promise<readonly string[]>
   /** Preload a locale's array without changing the current locale. */
   preload: (l: L) => Promise<readonly string[]>
+  /** Performance accessor: current readonly array reference for tight loops. */
+  dictRef: () => readonly string[]
 }
 
 type Dict = readonly string[]
@@ -110,11 +112,18 @@ export function createSolidLokat<L = unknown>(
   let currentDict: Dict = options.initialDict ?? []
   const [_dictSignal, setDictSignal] = createSignal<Dict>(currentDict)
 
+  // Hot-path translator. Rebind this function when the dictionary changes
+  // so JVM/JS engines can optimize a monomorphic call site. It closes over
+  // the current dictionary value directly.
+  let t = (id: number): string => currentDict[id] as string
+
   const cache = new Map<L, Promise<Dict>>()
 
   function setDictInternal(d: Dict) {
     if (currentDict !== d) {
       currentDict = d
+      // Rebind hot-path translator to close over the new dictionary.
+      t = (id: number): string => d[id] as string
       setDictSignal(d)
     }
   }
@@ -128,7 +137,11 @@ export function createSolidLokat<L = unknown>(
         return d
       }
     }
-    const promise = options.loadLocale(l)
+    // Ensure failures do not poison the cache: remove the cache entry on reject.
+    const promise = options.loadLocale(l).catch((e) => {
+      if (!options.dev?.disableCache) cache.delete(l)
+      throw e
+    })
     if (!options.dev?.disableCache) cache.set(l, promise)
     const d = await promise
     setDictInternal(d)
@@ -139,9 +152,9 @@ export function createSolidLokat<L = unknown>(
     void load(options.initialLocale)
   }
 
-  function t(id: number): string {
-    // No fallback: invalid id results in undefined; by design for fail-fast.
-    return currentDict[id] as string
+  // Expose the hot-path translator. It will be rebound by `setDictInternal`.
+  function tWrapper(id: number): string {
+    return t(id)
   }
 
   function set(l: L): Promise<Dict> {
@@ -158,10 +171,14 @@ export function createSolidLokat<L = unknown>(
       const cached = cache.get(l)
       if (cached) return cached
     }
-    const promise = options.loadLocale(l)
+    // Avoid poisoning cache on loader rejection.
+    const promise = options.loadLocale(l).catch((e) => {
+      if (!options.dev?.disableCache) cache.delete(l)
+      throw e
+    })
     if (!options.dev?.disableCache) cache.set(l, promise)
     return promise
   }
 
-  return { t, locale, setLocale: set, preload }
+  return { t: tWrapper, locale, setLocale: set, preload, dictRef: () => currentDict }
 }
