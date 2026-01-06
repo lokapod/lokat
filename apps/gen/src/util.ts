@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs"
 import { basename, join } from "node:path"
-import type { InputLayout, LocaleCode, LocaleDict, Namespace } from "./types.ts"
+import type { InputLayout, LocaleCode, LocaleDict, Namespace } from "./types"
 
 function readJson(file: string): LocaleDict {
   const raw = readFileSync(file, "utf8")

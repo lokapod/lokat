@@ -1,10 +1,4 @@
-import type {
-  GenerateResult,
-  InputLayout,
-  LocaleCode,
-  Namespace,
-  ValidationIssue,
-} from "./types.ts"
+import type { GenerateResult, InputLayout, LocaleCode, Namespace, ValidationIssue } from "./types"
 
 export function validateAndOrder(layout: InputLayout, refLocale: LocaleCode): GenerateResult {
   const issues: ValidationIssue[] = []

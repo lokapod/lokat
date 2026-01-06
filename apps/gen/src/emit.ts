@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
-import type { GenerateResult, InputLayout, LocaleCode, Namespace } from "./types.ts"
+import type { GenerateResult, InputLayout, LocaleCode, Namespace } from "./types"
 import { names } from "./util"
 
 function emitKeys(outputDir: string, namespaces: Namespace[], orderByNs: Map<Namespace, string[]>) {

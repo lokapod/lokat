@@ -1,7 +1,8 @@
+#!/usr/bin/env node
 import { join } from "node:path"
-import { emitAll } from "./emit.ts"
-import { loadLayout } from "./util.ts"
-import { validateAndOrder } from "./validate.ts"
+import { emitAll } from "./emit"
+import { loadLayout } from "./util"
+import { validateAndOrder } from "./validate"
 
 function parseArgs(argv: string[]) {
   const args = new Map<string, string>()
@@ -18,7 +19,7 @@ function parseArgs(argv: string[]) {
 
 function help() {
   console.log(
-    `@lokat/gen — integer keyspace codegen\n\nUsage:\n  bun run src/cli.ts -- --in ./locales --out ./i18n/generated --locales en,id --ref en\n\nOptions:\n  --in       Input directory containing locale JSONs\n  --out      Output directory for generated TS files\n  --locales  Comma-separated locale codes (e.g., en,id)\n  --ref      Reference locale for key order (e.g., en)\n`,
+    `@lokat/gen — integer keyspace codegen\n\nUsage (npx):\n  npx @lokat/gen --in ./locales --out ./i18n/generated --locales en,id --ref en\n\nUsage (local dev):\n  bun run src/cli.ts -- --in ./locales --out ./i18n/generated --locales en,id --ref en\n\nOptions:\n  --in       Input directory containing locale JSONs\n  --out      Output directory for generated TS files\n  --locales  Comma-separated locale codes (e.g., en,id)\n  --ref      Reference locale for key order (e.g., en)\n`,
   )
 }
 
@@ -27,7 +28,7 @@ async function main() {
   if (args.has("help") || args.size === 0) return help()
 
   const inputDir = args.get("in") || "./locales"
-  const outputDir = args.get("out") || "./i18n/generated"
+  const outputDir = args.get("out") || "./locales/gen"
   const locales = (args.get("locales") || "en")
     .split(",")
     .map((s) => s.trim())
