@@ -1,3 +1,17 @@
+/**
+ * @package @lokat/solid
+ * Ultra-lightweight Solid I18n (string-keyed dictionaries).
+ *
+ * A compact Solid-first i18n adapter focused on minimal runtime overhead and
+ * predictable behavior. It provides zero-allocation O(1) lookups for common
+ * translations and reactive signals for UI updates.
+ *
+ * Highlights:
+ * - Hot-path `t(key)` performs a plain object property read without reactive tracking.
+ * - `dictRef()` returns the non-reactive dictionary reference for performance-critical loops.
+ * - Instance-scoped single-flight cache and SSR hydration support via `initialDict`.
+ * - Dev hooks: `onLocaleChange`, `onError` and `dev.disableCache` for development workflows.
+ */
 import { createSignal } from "solid-js"
 
 /**
@@ -50,6 +64,8 @@ export interface SolidLokatInstance<L = unknown> {
   t: (key: string) => string
   /** Locale signal getter: reactive in Solid components. */
   locale: () => L
+  /** Performance accessor: current plain dictionary reference for tight loops. */
+  dictRef: () => Record<string, string>
   /**
    * Set a new locale and load its dictionary.
    * @param l The next locale.
@@ -171,9 +187,18 @@ export function createSolidLokat<L = unknown>(
         return d
       }
     }
-    const promise = options.loadLocale(l)
-    if (!options.dev?.disableCache) cache.set(l, promise)
-    const d = await promise
+    const p = options.loadLocale(l)
+    if (!options.dev?.disableCache) {
+      const wrapped = p.catch((err) => {
+        cache.delete(l)
+        throw err
+      })
+      cache.set(l, wrapped)
+      const d = await wrapped
+      setDictInternal(d)
+      return d
+    }
+    const d = await p
     setDictInternal(d)
     return d
   }
@@ -214,9 +239,16 @@ export function createSolidLokat<L = unknown>(
       const cached = cache.get(l)
       if (cached) return cached
     }
-    const promise = options.loadLocale(l)
-    if (!options.dev?.disableCache) cache.set(l, promise)
-    return promise
+    const p = options.loadLocale(l)
+    if (!options.dev?.disableCache) {
+      const wrapped = p.catch((err) => {
+        cache.delete(l)
+        throw err
+      })
+      cache.set(l, wrapped)
+      return wrapped
+    }
+    return p
   }
 
   return {
@@ -224,5 +256,6 @@ export function createSolidLokat<L = unknown>(
     locale,
     setLocale: set,
     preload,
+    dictRef: () => currentDict,
   }
 }
