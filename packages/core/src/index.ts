@@ -152,7 +152,14 @@ export function createLokat(options: LokatOptions): LokatInstance {
     if (!promise) {
       const url = resolveLocaleUrl(locale)
       // Defer to provided fetcher; no runtime validation for minimal overhead.
-      promise = fetcher(url).then((r) => r.json() as Promise<Record<string, string>>)
+      const p = fetcher(url).then((r) => r.json() as Promise<Record<string, string>>)
+      // Prevent cache poisoning: if the loader rejects, remove entry so future
+      // attempts can retry instead of reusing a rejected promise.
+      const wrapped = p.catch((err) => {
+        cache.delete(locale)
+        throw err
+      })
+      promise = wrapped
       cache.set(locale, promise)
     }
     return promise
@@ -172,3 +179,17 @@ export function createLokat(options: LokatOptions): LokatInstance {
  * Alias for consumers who prefer discovery via `CreateLokatOptions`.
  */
 export type { LokatOptions as CreateLokatOptions }
+
+/**
+ * Extreme-mode translator for readonly arrays (integer keyspace).
+ * Upper bound performance; no fallback — out-of-bounds yields `undefined`.
+ * Suitable for build-time codegen outputs.
+ *
+ * @example
+ * const arr = Object.freeze(["OK", "Cancel"]) as const
+ * const tId = createTA(arr)
+ * tId(0) // "OK"
+ */
+export function createTA(arr: readonly string[]): (id: number) => string {
+  return (id: number): string => arr[id] as string
+}
