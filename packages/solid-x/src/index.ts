@@ -1,3 +1,17 @@
+/**
+ * @package @lokat/solid-x
+ * Ultra-lightweight Solid-X array-mode I18n.
+ *
+ * A minimal, Solid-first adapter optimized for integer-keyed localization
+ * backed by readonly string arrays. Intended for build-time codegen outputs
+ * or tiny runtime bundles where hot-path latency is critical.
+ *
+ * Highlights:
+ * - O(1) hot-path: monomorphic `t(id)` rebound on dict changes for JIT optimization.
+ * - `dictRef()` exposes the raw readonly array for tight loops and array-style codegen.
+ * - Instance-scoped single-flight cache with failure-safe behavior (no cache poisoning).
+ * - SSR-friendly: supports `initialDict` for hydration without flash.
+ */
 import { createSignal } from "solid-js"
 
 /**
